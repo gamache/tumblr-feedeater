@@ -3,7 +3,8 @@ FEEDEATER renders a Tumblr feed into HTML.
 See index.html and main.js for basic usage, and tumblr-feedeater.js
 for advanced usage.
 
-Requires jQuery because it's 2012.
+Requires jQuery because it's 2012.  Testing requires Jasmine.
+Released under the MIT License.
 
 january 2012   pete gamache   gamache!#@$!gmail.com
 
