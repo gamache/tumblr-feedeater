@@ -4,7 +4,6 @@
 
 FEEDEATER = {
   // config variables -- you can set them directly
-  tumblr_host: null,  // e.g., 'omgblogz.tumblr.com'
   image_width: 500,   // options: 75, 100, 250, 400, 500, 1280
 
   // ... or use the set({...}) function to set a hash of options
@@ -19,10 +18,6 @@ FEEDEATER = {
   // render_posts renders all posts into the #tumblr-posts element
   // or the value of opts['target'] if specified
   render_posts: function (opts) {
-    if (!FEEDEATER.tumblr_host) {
-      alert('You gotta set FEEDEATER.tumblr_host dude');
-      return;
-    }
     opts = opts || {};
     target = opts['target'] || '#tumblr-posts';
     target = $(target);

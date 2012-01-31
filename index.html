@@ -1,13 +1,22 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>tumblr feeeed</title>
-    <script src="http://code.jquery.com/jquery-1.7.1.js"></script>
-    <script src="http://petegamache.tumblr.com/api/read/json"></script>
+    <title>tumblr-feedeater.js test page</title>
+
+    <script src="test/jquery-1.7.1.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="test/jasmine-1.1.0/jasmine.css">
+    <script src="test/jasmine-1.1.0/jasmine.js"></script>
+    <script src="test/jasmine-1.1.0/jasmine-html.js"></script>
+
+    <script src="test/spec-helper.js"></script>
+    <script src="test/feedeater-spec.js"></script>
+
+    <script src="test/feedeater-tumblr_api_read.js"></script>
     <script src="tumblr-feedeater.js"></script>
-    <script src="main.js"></script>
   </head>
   <body>
+    <h1>tumblr-feedeater.js test page</h1>
     <div id="tumblr-posts">
     </div><!-- #tumblr-posts -->
   </body>
