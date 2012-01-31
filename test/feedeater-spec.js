@@ -40,14 +40,17 @@ describe('feedeater', function() {
     expect(n).toEqual(nposts);
   });
 
-  it('renders h2 title for regular, conversation, video, audio', function () {
+  it('renders non-blank h2.title for regular, conversation, video, audio', function () {
     var n = 0;
     $('#tumblr-posts').children('.regular,.conversation,.video,.audio')
       .each(function(){ n++; });
     expect(n).not.toEqual(0);
     $('#tumblr-posts').children('.regular,.conversation,.video,.audio')
       .children('h2.title')
-      .each(function(){ n--; });
+      .each(function(idx,val){
+        expect($(val).html()).not.toEqual('');
+        n--;
+      });
     expect(n).toEqual(0);
   });
 
