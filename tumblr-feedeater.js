@@ -19,7 +19,7 @@ FEEDEATER = {
   // or the value of opts['target'] if specified
   render_posts: function (opts) {
     opts = opts || {};
-    target = opts['target'] || '#tumblr-posts';
+    target = opts['target'] || '#tumblr-posts'
     target = $(target);
     for (var i in tumblr_api_read['posts']) {
       var post = tumblr_api_read['posts'][i];
@@ -61,21 +61,21 @@ FEEDEATER = {
       for (var i in post['conversation']) {
         var line = post['conversation'][i];
         convo.append('<div class="line"><span class="name">' +
-                     line['line-name'] + '</span><span class="text">' +
-                     line['line-text'] + '</span></div>');
+                     line['name'] + '</span><span class="phrase">' +
+                     line['phrase'] + '</span></div>');
       }
       return FEEDEATER.render_div(post)
-               .html('<h2>' + post['conversation-title'] + '</h2>')
+               .html('<h2 class="title">' + post['conversation-title'] + '</h2>')
                .append(convo);
     },
     video: function (post) {
       return FEEDEATER.render_div(post)
-               .html('<h2>' + post['video-caption'] + '</h2>' +
+               .html('<h2 class="title">' + post['video-caption'] + '</h2>' +
                      post['video-player']);
     },
     audio: function (post) {
       return FEEDEATER.render_div(post)
-               .html('<h2>' + post['audio-caption'] + '</h2>' +
+               .html('<h2 class="title">' + post['audio-caption'] + '</h2>' +
                      post['audio-player']);
     },
     answer: function (post) {
