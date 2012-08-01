@@ -19,11 +19,7 @@ FEEDEATER = function FEEDEATER(opts) {
   this.image_width = opts['image_width'] || 500;
 
   this.load_renderers();
-  if (opts['renderers']) {
-    for (var r in opts['renderers']) {
-      this.renderers.r = opts['renderers'][r];
-    }
-  }
+  if (opts['renderers']) this.load_renderers(opts['renderers']);
 };
 
 /**
