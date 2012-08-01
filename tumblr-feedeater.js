@@ -1,27 +1,25 @@
 (function(){
+
   FEEDEATER = function FEEDEATER(opts) {
     opts = opts || {};
-    if (opts['feed']) {
-      this.feed = opts['feed'];
+    this.feed = opts['feed'] || tumblr_api_read;
+    this.target = opts['target'] || 'tumblr-posts';
+
+    this.load_renderers();
+    if (opts['renderers']) {
+      for (var r in opts['renderers']) {
+        this.renderers.r = opts['renderers'][r];
+      }
     }
-    else {
-      this.feed = tumblr_api_read;
-    }
-    if (opts['target']) this.target = opts.target;
   };
 
-  // for backward compatibility
+  // class method, for backward compatibility
   FEEDEATER.render_posts = function (opts) {
     var f = new FEEDEATER(opts);
     f.render();
   };
 
-  FEEDEATER.prototype.target = 'tumblr-posts';
-
-  FEEDEATER.prototype.set = function set(key, value) {
-    this[key] = value;
-  };
-
+  // public instance method: render()
   FEEDEATER.prototype.render = function render(opts) {
     opts = opts || {};
     var target = opts['target'] || this.target;
@@ -33,6 +31,8 @@
     this.render_html_into_target(html, target);
   };
 
+
+  // private instance methods follow.
   FEEDEATER.prototype.render_html_into_target = function render_html_into_target(html, target) {
     if (jQuery && target.html) { // jQuery selector object
       target.html(html);
@@ -59,7 +59,16 @@
            '</div>';
   };
 
-  FEEDEATER.prototype.renderers = {
+
+  FEEDEATER.prototype.load_renderers = function load_renderers(renderers) {
+    renderers = renderers || FEEDEATER.renderers;
+    this.renderers = this.renderers || {};
+    for (var r in renderers) {
+      this.renderers[r] = renderers[r];
+    }
+  };
+
+  FEEDEATER.renderers = {
     regular: function render_regular(post) {
       return '<h2 class="title">' + post['regular-title'] + '</h2>' +
              '<div class="date">' + post['date'] + '</div>' +
