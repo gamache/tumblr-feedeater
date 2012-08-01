@@ -33,7 +33,7 @@ FEEDEATER = function FEEDEATER(opts) {
  *
  * @param {object} opts Desired options.
  */
-FEEDEATER.render_posts = function (opts) {
+FEEDEATER.render_posts = function render_posts(opts) {
   var f = new FEEDEATER(opts);
   f.render();
 };
@@ -69,6 +69,7 @@ FEEDEATER.prototype.render_to_string = function render_to_string(opts) {
   return html;
 };
 
+
 //// private methods follow.
 
 /**
@@ -96,7 +97,7 @@ FEEDEATER.prototype.render_html_into_target = function render_html_into_target(h
       elt.innerHTML = html;
     }
     else if (jQuery) {
-      $(target).html(html);
+      jQuery(target).html(html);
     }
   }
 };
