@@ -1,15 +1,24 @@
 FEEDEATER renders a Tumblr feed into HTML.
 
-Requires jQuery because it's 2012.
+Does not require jQuery, but can use jQuery if it's around --
+pass jQuery selectors or selector strings as the 'target' parameter,
+use jQuery in custom renderers, etc.
 
 
 Basic usage:
 
-  <script src="jquery.js"></script>
   <script src="tumblr-feedeater.js"></script>
   <script src="http://yourblog.tumblr.com/api/read/json"></script>
   <div id="tumblr-posts"></div>
-  <script>FEEDEATER.render_posts();</script>
+
+  <script>
+    // use old-style class invocation
+    FEEDEATER.render_posts();
+
+    // or new-style instance invocation
+    var f = new FEEDEATER();
+    f.render({target: 'tumblr-posts'});
+  </script>
 
 Advanced usage:
 
@@ -22,5 +31,6 @@ Testing:
 
 Released under the MIT License.
 
-january 2012   pete gamache   gamache!#@$!gmail.com
+ ,   copyright 2012         pete gamache     pete@#$!@#$gamache.org
+(k)  all rights reversed
 
