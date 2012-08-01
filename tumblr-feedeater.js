@@ -1,98 +1,109 @@
-// tumblr-feedeater.js
-// turn a Tumblr feed into HTML.
-// january 2012   pete gamache   gamache!#$@!#gmail.com
-
-FEEDEATER = {
-  // config variables -- you can set them directly
-  image_width: 500,   // options: 75, 100, 250, 400, 500, 1280
-
-  // ... or use the set({...}) function to set a hash of options
-  set: function (opts) {
-    for (var key in opts) {
-      if (opts.hasOwnProperty(key)) {
-        FEEDEATER[key] = opts[key];
-      }
-    }
-  },
-
-  // render_posts renders all posts into the #tumblr-posts element
-  // or the value of opts['target'] if specified
-  render_posts: function (opts) {
+(function(){
+  FEEDEATER = function FEEDEATER(opts) {
     opts = opts || {};
-    target = opts['target'] || '#tumblr-posts'
-    target = $(target);
-    for (var i in tumblr_api_read['posts']) {
-      var post = tumblr_api_read['posts'][i];
-      target.append(
-        FEEDEATER.render(post).append(FEEDEATER.render_date(post))
-      );
+    if (opts['feed']) {
+      this.feed = opts['feed'];
     }
-  },
+    else {
+      this.feed = tumblr_api_read;
+    }
+    if (opts['target']) this.target = opts.target;
+  };
 
-  // render(post) returns a jQuery rendering of a post
-  render: function (post) {
-    return FEEDEATER.renderers[post.type](post);
-  },
-  renderers: {
-    regular: function (post) {
-      return FEEDEATER.render_div(post)
-               .html('<h2 class="title">' + post['regular-title'] + '</h2>' +
-                     '<div class="regular-body">' + post['regular-body'] +
-                     '</div>');
-    },
-    link: function (post) {
-      return FEEDEATER.render_div(post)
-               .html('<a href="' + post['link-url'] + '">' +
-                     post['link-text'] + '</a>');
-    },
-    quote: function (post) {
-      return FEEDEATER.render_div(post)
-               .html('<dd>' + post['quote-text'] + '</dd>' +
-                     '<dt>' + post['quote-source'] + '</dt>');
-    },
-    photo: function (post) {
-      return FEEDEATER.render_div(post)
-               .html('<img src="' + post['photo-url-' + FEEDEATER.image_width]
-                     + '">' + '<div class="caption">' + post['photo-caption'] +
-                     '</div>');
-    },
-    conversation: function (post) {
-      var convo = $('<div class="conversation"></div>');
-      for (var i in post['conversation']) {
-        var line = post['conversation'][i];
-        convo.append('<div class="line"><span class="name">' +
-                     line['name'] + '</span><span class="phrase">' +
-                     line['phrase'] + '</span></div>');
+  // for backward compatibility
+  FEEDEATER.render_posts = function (opts) {
+    var f = new FEEDEATER(opts);
+    f.render();
+  };
+
+  FEEDEATER.prototype.target = 'tumblr-posts';
+
+  FEEDEATER.prototype.set = function set(key, value) {
+    this[key] = value;
+  };
+
+  FEEDEATER.prototype.render = function render(opts) {
+    opts = opts || {};
+    var target = opts['target'] || this.target;
+    var posts = opts['posts'] || this.feed.posts;
+    var html = '';
+    for (var i in posts) {
+      html += this.render_post_to_html(posts[i]);
+    }
+    this.render_html_into_target(html, target);
+  };
+
+  FEEDEATER.prototype.render_html_into_target = function render_html_into_target(html, target) {
+    if (jQuery && target.html) { // jQuery selector object
+      target.html(html);
+    }
+    else if (target.innerHTML) { // element
+      target.innerHTML = html;
+    }
+    else if (target) {
+      // target is string; try to use it as an element id, otherwise if
+      // jQuery's loaded, use it as a jQuery selector string
+      var elt = document.getElementById(target);
+      if (elt) {
+        elt.innerHTML = html;
       }
-      return FEEDEATER.render_div(post)
-               .html('<h2 class="title">' + post['conversation-title'] + '</h2>')
-               .append(convo);
-    },
-    video: function (post) {
-      return FEEDEATER.render_div(post)
-               .html('<h2 class="title">' + post['video-caption'] + '</h2>' +
-                     post['video-player']);
-    },
-    audio: function (post) {
-      return FEEDEATER.render_div(post)
-               .html('<h2 class="title">' + post['audio-caption'] + '</h2>' +
-                     post['audio-player']);
-    },
-    answer: function (post) {
-      return FEEDEATER.render_div(post)
-               .html('<div class="question">' + post['question'] + '</div>' +
-                     '<div class="answer">' + post['answer'] + '</div>');
+      else if (jQuery) {
+        $(target).html(html);
+      }
     }
-  },
+  };
 
-  // render_div(post) returns an empty jQuery post div
-  render_div: function (post) {
-    return $('<div class="tumblr-post '+post.type+'"></div>');
-  },
+  FEEDEATER.prototype.render_post_to_html = function render_post_to_html(post){
+    return '<div class="tumblr-post ' + post.type + '">' +
+           this.renderers[post.type](post) +
+           '</div>';
+  };
 
-  // render_date(post) returns a jQuery rendering of a post's date
-  render_date: function (post) {
-    return $('<div class="date">' + post['date'] + '</div>');
-  }
-};
+  FEEDEATER.prototype.renderers = {
+    regular: function render_regular(post) {
+      return '<h2 class="title">' + post['regular-title'] + '</h2>' +
+             '<div class="date">' + post['date'] + '</div>' +
+             '<div class="regular-body">' + post['regular-body'] + '</div>';
+    },
+    link: function render_link(post) {
+      return '<a href="' + post['link-url'] + '">' + post['link-text'] + '</a>' +
+             '<div class="date">' + post['date'] + '</div>';
+    },
+    quote: function render_quote(post) {
+      return '<dd>' + post['quote-text'] + '</dd>' +
+             '<dt>' + post['quote-source'] + '</dt>' +
+             '<div class="date">' + post['date'] + '</div>';
+    },
+    photo: function render_photo(post) {
+      return '<img src="' + post['photo-url-'+this.image_width] + '"/>' +
+             '<div class="caption">' + post['photo-caption'] + '</div>' +
+             '<div class="date">' + post['date'] + '</div>';
+    },
+    conversation: function render_conversation(post) {
+      var convo = '',
+          lines = post['conversation'];
 
+      convo = '<h2 class="title">' + post['conversation-title'] + '</h2>' +
+              '<div class="date">' + post['date'] + '</div>';
+      for (var i in lines) {
+        convo += '<div class="line"><span class="name">' + lines[i].name +
+                 '</span><span class="phrase">' + lines[i].phrase + '</span></div>';
+      }
+      return convo;
+    },
+    video: function render_video(post) {
+      return '<h2 class="title">' + post['video-caption'] + '</h2>' +
+             '<div class="date">' + post['date'] + '</div>' + post['video-player'];
+    },
+    audio: function render_audio(post) {
+      return '<h2 class="title">' + post['audio-caption'] + '</h2>' +
+             '<div class="date">' + post['date'] + '</div>' + post['audio-player'];
+    },
+    answer: function render_answer(post) {
+      return '<div class="question">'+ post['question'] + '</div>' +
+             '<div class="answer">' + post['answer'] + '</div>' +
+             '<div class="date">' + post['date'] + '</div>';
+    }
+  };
+
+})();
