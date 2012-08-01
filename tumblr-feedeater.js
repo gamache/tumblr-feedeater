@@ -2,6 +2,7 @@
  * Creates an instance of FEEDEATER.  Valid options:
  *   'feed' specifies a tumblr feed.  Defaults to tumblr_api_read.
  *   'target' specifies default target element.  Defaults to 'tumblr-posts'.
+ *   'image_width' specifies desired image width.  Defaults to 500.
  *   'renderers' allows addition/override of rendering routines.  Must be an
  *     object of the form {'postType': rendering_fn, ...}.
  *
@@ -12,8 +13,10 @@
 
 FEEDEATER = function FEEDEATER(opts) {
   opts = opts || {};
+
   this.feed = opts['feed'] || tumblr_api_read;
   this.target = opts['target'] || 'tumblr-posts';
+  this.image_width = opts['image_width'] || 500;
 
   this.load_renderers();
   if (opts['renderers']) {
@@ -107,7 +110,7 @@ FEEDEATER.prototype.render_html_into_target = function render_html_into_target(h
  */
 FEEDEATER.prototype.render_post_to_html = function render_post_to_html(post){
   return '<div class="tumblr-post ' + post.type + '">' +
-         this.renderers[post.type](post) +
+         this.renderers[post.type](post, this) +
          '</div>';
 };
 
@@ -130,7 +133,8 @@ FEEDEATER.prototype.load_renderers = function load_renderers(renderers) {
  * @private
  *
  * Rendering functions for each post.type, keyed by post.type.
- * All functions take 'post' as single argument.
+ * All functions receive 'post' as first argument, 'this' (the FEEDEATER 
+ * instance) as second argument.
  * Renderers are loaded into a FEEDEATER object at instantiation time
  * by use of load_renderers().
  */
@@ -149,8 +153,8 @@ FEEDEATER.renderers = {
            '<dt>' + post['quote-source'] + '</dt>' +
            '<div class="date">' + post['date'] + '</div>';
   },
-  photo: function render_photo(post) {
-    return '<img src="' + post['photo-url-'+this.image_width] + '"/>' +
+  photo: function render_photo(post, that) {
+    return '<img src="' + post['photo-url-'+that.image_width] + '"/>' +
            '<div class="caption">' + post['photo-caption'] + '</div>' +
            '<div class="date">' + post['date'] + '</div>';
   },
