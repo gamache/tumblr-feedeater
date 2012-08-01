@@ -6,18 +6,50 @@ describe('feedeater', function() {
     expect(FEEDEATER).not.toEqual(undefined);
   });
 
-  it('can render_posts into default #tumblr-posts', function () {
+  it('can be instantiated', function() {
+    var f = new FEEDEATER();
+    expect(f).not.toEqual(undefined);
+  });
+
+  it('class can render_posts() into default #tumblr-posts', function () {
+    $('#tumblr-posts').remove();    
     $('body').append($('<div id="tumblr-posts"></div>').css('display', 'none'));
     expect($('#tumblr-posts').html()).toEqual('');
     FEEDEATER.render_posts();
     expect($('#tumblr-posts').html()).not.toEqual('');
   });
 
-  it('can render_posts into given target', function () {
+  it('class can render_posts() into given target', function () {
     $('body').append($('<div id="test"></div>').css('display', 'none'));
     expect($('#test').html()).toEqual('');
     FEEDEATER.render_posts({target: '#test'});
     expect($('#test').html()).not.toEqual('');
+    $('#test').remove();
+  });
+
+  it('instance can render() into default #tumblr-posts', function() {
+    var f = new FEEDEATER();
+    $('#tumblr-posts').remove();
+    $('body').append($('<div id="tumblr-posts"></div>').css('display', 'none'));
+    expect($('#tumblr-posts').html()).toEqual('');
+    f.render();
+    expect($('#tumblr-posts').html()).not.toEqual('');
+  });
+
+  it('instance can render() into given target', function() {
+    var f = new FEEDEATER();
+    $('body').append($('<div id="test"></div>').css('display', 'none'));
+    expect($('#test').html()).toEqual('');
+    f.render({target: 'test'});
+    expect($('#test').html()).not.toEqual('');
+    $('#test').remove();
+  });
+
+  it('instance can render_to_string()', function () {
+    var f = new FEEDEATER();
+    var html = f.render_to_string();
+    expect(html).not.toEqual('');
+    expect(html).not.toEqual(undefined);
   });
 
   it('renders all posts', function() {
