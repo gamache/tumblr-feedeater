@@ -9,7 +9,15 @@ Basic usage:
   <script src="tumblr-feedeater.js"></script>
   <script src="http://yourblog.tumblr.com/api/read/json"></script>
   <div id="tumblr-posts"></div>
-  <script>FEEDEATER.render_posts();</script>
+
+  <script>
+    // use old-style class invocation
+    FEEDEATER.render_posts();
+
+    // or new-style instance invocation
+    var f = new FEEDEATER();
+    f.render({target: 'tumblr-posts'});
+  </script>
 
 Advanced usage:
 
