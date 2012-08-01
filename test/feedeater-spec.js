@@ -24,6 +24,7 @@ describe('feedeater', function() {
     expect($('#test').html()).toEqual('');
     FEEDEATER.render_posts({target: '#test'});
     expect($('#test').html()).not.toEqual('');
+    $('#test').remove();
   });
 
   it('instance can render() into default #tumblr-posts', function() {
@@ -33,6 +34,22 @@ describe('feedeater', function() {
     expect($('#tumblr-posts').html()).toEqual('');
     f.render();
     expect($('#tumblr-posts').html()).not.toEqual('');
+  });
+
+  it('instance can render() into given target', function() {
+    var f = new FEEDEATER();
+    $('body').append($('<div id="test"></div>').css('display', 'none'));
+    expect($('#test').html()).toEqual('');
+    f.render({target: 'test'});
+    expect($('#test').html()).not.toEqual('');
+    $('#test').remove();
+  });
+
+  it('instance can render_to_string()', function () {
+    var f = new FEEDEATER();
+    var html = f.render_to_string();
+    expect(html).not.toEqual('');
+    expect(html).not.toEqual(undefined);
   });
 
   it('renders all posts', function() {

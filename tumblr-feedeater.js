@@ -24,7 +24,8 @@ FEEDEATER = function FEEDEATER(opts) {
 };
 
 /**
- * Renders a Tumblr feed according to desired options. Class method.
+ * Renders a Tumblr feed into a target element, according to desired options.
+ * Class method.
  * See FEEDEATER constructor for valid options.
  *
  * @param {object} opts Desired options.
@@ -35,7 +36,8 @@ FEEDEATER.render_posts = function (opts) {
 };
 
 /**
- * Renders a Tumblr feed according to desired options. Instance method.
+ * Renders a Tumblr feed into a target element, according to desired options.
+ * Instance method.
  * See FEEDEATER constructor for valid options.
  *
  * @param {object} opts Desired options.
@@ -43,14 +45,26 @@ FEEDEATER.render_posts = function (opts) {
 FEEDEATER.prototype.render = function render(opts) {
   opts = opts || {};
   var target = opts['target'] || this.target;
+  var html = this.render_to_string(opts);
+  this.render_html_into_target(html, target);
+};
+
+/**
+ * Renders a Tumblr feed to an HTML string, according to desired options.
+ * See FEEDEATER constructor for valid options.
+ *
+ * @param {object} opts Desired options.
+ * @return {string} HTML string.
+ */
+FEEDEATER.prototype.render_to_string = function render_to_string(opts) {
+  opts = opts || {};
   var posts = opts['posts'] || this.feed.posts;
   var html = '';
   for (var i in posts) {
     html += this.render_post_to_html(posts[i]);
   }
-  this.render_html_into_target(html, target);
+  return html;
 };
-
 
 //// private methods follow.
 
