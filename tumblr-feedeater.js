@@ -23,9 +23,7 @@ FEEDEATER = {
     target = $(target);
     for (var i in tumblr_api_read['posts']) {
       var post = tumblr_api_read['posts'][i];
-      target.append(
-        FEEDEATER.render(post) //.append(FEEDEATER.render_date(post))
-      );
+      target.append(FEEDEATER.render(post));
     }
   },
 
@@ -90,10 +88,5 @@ FEEDEATER = {
     return $('<div class="tumblr-post '+post.type+'"><div class="date">' + 
              post.date + '</div></div>');
   }
-
-  // render_date(post) returns a jQuery rendering of a post's date
-  // render_date: function (post) {
-  //   return $('<div class="date">' + post['date'] + '</div>');
-  // }
 };
 
