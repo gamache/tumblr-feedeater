@@ -5,12 +5,18 @@
  *   'image_width' specifies desired image width.  Defaults to 500.
  *   'renderers' allows addition/override of rendering routines.  Must be an
  *     object of the form {'postType': rendering_fn, ...}.
+ *   'postTypes' specifies the post types that should only be displayed. 
+ *     If the type to limit by is null, all post types will be displayed.
+ *   'postTags' specifies the tags of the posts that should be displayed.
+ *     If it is null, the post tags will not be used to limit what posts should appear.  
+ *
  *
  * @constructor
  * @this {FEEDEATER}
  * @param {object} opts Desired options.
  */
-
+var postTypes = null;
+var postTags = null;
 FEEDEATER = function FEEDEATER(opts) {
   opts = opts || {};
 
@@ -19,7 +25,18 @@ FEEDEATER = function FEEDEATER(opts) {
   this.image_width = opts['image_width'] || 500;
 
   this.load_renderers();
-  if (opts['renderers']) this.load_renderers(opts['renderers']);
+  if(opts['postTypes'])
+  {
+    postTypes = opts['postTypes'];
+  }
+  if(opts['postTags'])
+  {
+    postTags = opts['postTags'];
+  }
+  if (opts['renderers'])
+  {
+      this.load_renderers(opts['renderers']);
+  }
 };
 
 /**
@@ -59,8 +76,35 @@ FEEDEATER.prototype.render_to_string = function render_to_string(opts) {
   opts = opts || {};
   var posts = opts['posts'] || this.feed.posts;
   var html = '';
-  for (var i in posts) {
-    html += this.render_post_to_html(posts[i]);
+  for (var i in posts)
+  {
+    if(postTypes != null && postTags != null)
+    {
+      if(postTypes.includes(posts[i].type) && posts[i].tags != null && posts[i].tags.includes(postTags))
+      {
+            html += this.render_post_to_html(posts[i]);
+      }
+    }
+	else if(postTypes == null && postTags != null)
+	{
+		if(posts[i].tags != null && posts[i].tags.includes(postTags))
+		{
+			 html += this.render_post_to_html(posts[i]);
+		}
+	}
+	else if(postTypes != null && postTags == null)
+	{
+		if(postTypes.includes(posts[i].type))
+		{
+			html += this.render_post_to_html(posts[i]);
+		}
+	}
+    else
+    {
+        html += this.render_post_to_html(posts[i]);
+    }
+
+
   }
   return html;
 };
@@ -130,7 +174,7 @@ FEEDEATER.prototype.load_renderers = function load_renderers(renderers) {
  * @private
  *
  * Rendering functions for each post.type, keyed by post.type.
- * All functions receive 'post' as first argument, 'this' (the FEEDEATER 
+ * All functions receive 'post' as first argument, 'this' (the FEEDEATER
  * instance) as second argument.
  * Renderers are loaded into a FEEDEATER object at instantiation time
  * by use of load_renderers().
@@ -181,4 +225,3 @@ FEEDEATER.renderers = {
            '<div class="date">' + post['date'] + '</div>';
   }
 };
-
